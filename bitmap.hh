@@ -18,7 +18,7 @@ public:
    * @param  nelts  the number of elements needed.
    */
   
-  void reserve (uint32_t nelts) {
+  void reserve (uint64_t nelts) {
     if (_bitarray) {
       Heap::free (_bitarray);
     }
@@ -44,8 +44,8 @@ public:
   }
 
   /// @return true iff the bit was not set (but it is now).
-  inline bool tryToSet (uint32_t index) {
-    uint32_t item, position;
+  inline bool tryToSet (uint64_t index) {
+    uint64_t item, position;
     computeItemPosition (index, item, position);
     const WORD mask = getMask(position);
     unsigned long oldvalue = _bitarray[item];
@@ -55,8 +55,8 @@ public:
 
   /// Clears the bit at the given index.
   /// @return True iff the bit was previously set.
-  inline bool reset (uint32_t index) {
-    uint32_t item, position;
+  inline bool reset (uint64_t index) {
+    uint64_t item, position;
     computeItemPosition (index, item, position);
     unsigned long oldvalue = _bitarray[item];
     WORD newvalue = oldvalue &  ~(getMask(position));
@@ -64,8 +64,8 @@ public:
     return (oldvalue != newvalue);
   }
 
-  inline bool isSet (uint32_t index) const {
-    uint32_t item, position;
+  inline bool isSet (uint64_t index) const {
+    uint64_t item, position;
     computeItemPosition (index, item, position);
     bool result = _bitarray[item] & getMask(position);
     return result;
@@ -74,9 +74,9 @@ public:
 private:
 
   /// Given an index, compute its item (word) and position within the word.
-  void computeItemPosition (uint32_t index,
-			    uint32_t& item,
-			    uint32_t& position) const
+  void computeItemPosition (uint64_t index,
+			    uint64_t& item,
+			    uint64_t& position) const
   {
     const int WordBitShift = staticlog(sizeof(size_t) * 8);
     assert (index < _elements);
@@ -91,7 +91,7 @@ private:
 
   /// To find the bit in a word, do this: word & getMask(bitPosition)
   /// @return a "mask" for the given position.
-  inline static WORD getMask (uint32_t pos) {
+  inline static WORD getMask (uint64_t pos) {
     return ((WORD) 1) << pos;
   }
 
@@ -108,7 +108,7 @@ private:
   WORD * _bitarray;
   
   /// The number of elements in the array.
-  uint32_t _elements;
+  uint64_t _elements;
 
 };
 
