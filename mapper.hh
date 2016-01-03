@@ -92,12 +92,6 @@ public:
 
   auto * malloc(size_t sz) {
     // Compute size class.
-#if 1 // not needed with ANSImalloc wrapper
-    // First, enforce a minimum size.
-    if (sz < HL::MallocInfo::MinSize) {
-      sz = HL::MallocInfo::MinSize;
-    }
-#endif
     assert(sz >= HL::MallocInfo::MinSize);
     auto index = Sizer::getClassFromSize(sz);
     sz = Sizer::getSizeFromClass(index);
