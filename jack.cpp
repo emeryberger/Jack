@@ -25,6 +25,7 @@
 using namespace std;
 
 #include "ansiwrapper.hh"
+#include "jallocator.hh"
 #include "lockedheap.hh"
 #include "maclock.hh"
 #include "mallocator.hh"
@@ -41,7 +42,10 @@ typedef HalfLogSizeClassManager Sizer;
 /// The definition of the custom heap.
 /// ANSI semantics, locked with one big Mac lock, around a Jack mallocator.
 
-typedef HL::ANSIWrapper<HL::LockedHeap<HL::MacLock, Mallocator<4096, Sizer, USE_RANDOMIZATION>>> theHeap;
+
+typedef HL::ANSIWrapper<HL::LockedHeap<HL::MacLock, Jallocator<4096, Sizer, USE_RANDOMIZATION>>> theHeap;
+
+//typedef HL::ANSIWrapper<HL::LockedHeap<HL::MacLock, Mallocator<4096, Sizer, USE_RANDOMIZATION>>> theHeap;
 
 //bool isCustomHeapInitialized = false;
 
@@ -118,10 +122,9 @@ main()
 {
   auto sz = 8;
   for (int i = 0; i < 10; i++) {
-    for (int j = 0; j < 2; j++) {
+    for (int j = 0; j < 2000; j++) {
       auto * p = getCustomHeap()->malloc(sz);
       getCustomHeap()->free(p);
-      cout << p << endl;
     }
     sz += 8;
   }

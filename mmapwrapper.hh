@@ -81,7 +81,7 @@ namespace HL {
 
 
     // Release the given range of memory to the OS (without unmapping it).
-    void release (void * ptr, size_t sz) {
+    static void release (void * ptr, size_t sz) {
       if ((size_t) ptr % Alignment == 0) {
 	// Extra sanity check in case the superheap's declared alignment is wrong!
 #if defined(_WIN32)

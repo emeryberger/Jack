@@ -69,6 +69,10 @@ public:
     return index;
   }
 
+  inline static auto getBase(int cl) {
+    return (uintptr_t) baseAddress + RangeSize * cl;
+  }
+
   uint32_t static getPosition(void * ptr) {
     auto cl = getSizeClass(ptr);
     auto start = (baseAddress + cl * RangeSize);
@@ -80,6 +84,10 @@ public:
     auto start = (baseAddress + cl * RangeSize);
     uint32_t pos = ((uintptr_t) ptr - start) / (uint32_t) Sizer::getSizeFromClass(cl);
     return pos;
+  }
+
+  static size_t getSizeFromClass(int cl) {
+    return Sizer::getSizeFromClass(cl);
   }
 
   auto * malloc(size_t sz) {
@@ -146,7 +154,8 @@ public:
     return szFromClass - distance;
   }
 
-  static const size_t RangeSize   = 4UL * 1024UL * 1024UL * 1024UL; // 4GB per size class
+  static const size_t RangeSize   = 0x10000000000; // 1TB per size class
+  //  static const size_t RangeSize   = 4UL * 1024UL * 1024UL * 1024UL; // 4GB per size class
 
 private:
 

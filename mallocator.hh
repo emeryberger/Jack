@@ -36,6 +36,7 @@ public:
   void * malloc(size_t sz) {
     // Compute size class.
     auto ind = Sizer::getClassFromSize(sz);
+
     // If empty, refill.
     if (_index[ind] == 0) {
       auto newSize = Sizer::getSizeFromClass(ind);
