@@ -32,15 +32,12 @@ public:
   }
 
   void * malloc(size_t sz) {
-    // Compute size class.
-    auto ind = Sizer::getClassFromSize(sz);
-
     //// JUST GET FRESH MEMORY AND NEVER REUSE IT.
-    auto newSize = Sizer::getSizeFromClass(ind);
-    void * p = _theMapper.malloc(newSize);
+    void * p = _theMapper.malloc(sz);
     // If this is a "small" object (smaller than a page),
     // and it's on a new page, set the remainder for that page to 4096 bytes.
     if (sz <= 4096) {
+      auto ind = Mapper<Sizer>::getIndex(p);
       if (((uintptr_t) p & ~4095) != ((uintptr_t) _lastPage[ind])) {
 	auto offset = (uintptr_t) p - Mapper<Sizer>::getBase(ind);
 	_remainingInPage[ind][offset / 4096] = 4096;
