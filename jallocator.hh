@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <array>
+#include <string.h>
 
 #include "bitmap.hh"
 #include "mallocinfo.hh"
@@ -53,10 +54,15 @@ public:
     auto ind = Mapper<Sizer>::getIndex(ptr);
     auto position = Mapper<Sizer>::getPosition(ind, ptr);
     auto size = Mapper<Sizer>::getSizeFromClass(ind);
+
     // We are freeing a small object. Track the amount available on
     // the page.  Once it becomes empty, free it.
     if (size <= HL::MmapWrapper::Size) {
-      auto offset = (uintptr_t) ptr - Mapper<Sizer>::getBase(ind);
+      auto base = Mapper<Sizer>::getBase(ind);
+      auto start = base + position * size;
+      // Clear it out to enable greater compressibility.
+      memset((void *) start, 0, size);
+      auto offset = (uintptr_t) ptr - base;
       _remainingInPage[ind][offset / HL::MmapWrapper::Size] -= _theMapper.getSize(ptr);
       if (_remainingInPage[ind][offset / HL::MmapWrapper::Size] == 0) {
 	auto startPage = (void *) ((uintptr_t) ptr & ~(HL::MmapWrapper::Size-1));
@@ -64,6 +70,7 @@ public:
       }
     } else {
       // Unmap immediately.
+      HL::MmapWrapper::release (ptr, size);
       HL::MmapWrapper::unmap (ptr, size);
     }
   }
@@ -98,6 +105,7 @@ private:
 	} else {
 	  // Out of sequence.
 	  // We had an old sequence - dump it and start a new one.
+	  HL::MmapWrapper::release (start, sz);
 	  HL::MmapWrapper::unmap (start, sz);
 	  start = p;
 	  last = (void *) ((uintptr_t) p + HL::MmapWrapper::Size);
@@ -106,6 +114,7 @@ private:
 	i++;
       }
       // Free remainder.
+      HL::MmapWrapper::release (start, sz);
       HL::MmapWrapper::unmap (start, sz);
       _freedCount = 0;
     }
