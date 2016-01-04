@@ -73,7 +73,8 @@ extern "C" {
 #if 0 // for stats only
     static int count = 0;
     count++;
-    if (count % 10000 == 0) {
+    if (count % 100000 == 0) {
+      system("date");
       char buf[255];
       sprintf(buf,"%zu\n",sz);
       write(1,buf,strlen(buf));
