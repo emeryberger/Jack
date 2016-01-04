@@ -148,7 +148,7 @@ public:
     return szFromClass - distance;
   }
 
-  static const size_t RangeSize   = 0x20000000000; // 2TB per size class
+  static const size_t RangeSize   = 0x30000000000; // 2TB per size class
   //  static const size_t RangeSize   = 4UL * 1024UL * 1024UL * 1024UL; // 4GB per size class
 
 private:
