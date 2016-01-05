@@ -123,7 +123,7 @@ main()
 {
   auto sz = 8;
   for (int i = 0; i < 10; i++) {
-    for (int j = 0; j < 2000; j++) {
+    for (int j = 0; j < 200000; j++) {
       auto * p = getCustomHeap()->malloc(sz);
       getCustomHeap()->free(p);
     }
