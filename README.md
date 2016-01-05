@@ -14,4 +14,12 @@ reduce space overhead and achieve O(1) allocation costs, while making
 it difficult to predict the location of objects (since all objects are
 randomly placed in memory).
 
+UPDATE
+------
+
+Jack now incorporates a very different kind of allocator that never
+recycles memory.  Instead, it leverages the enormous address spaces
+available on 64-bit systems; for most applications, this is enough to
+run for years without any issues.
+
 
