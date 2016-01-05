@@ -70,7 +70,7 @@ public:
       }
     } else {
       // Unmap immediately.
-      HL::MmapWrapper::release (ptr, size);
+      //      HL::MmapWrapper::release (ptr, size);
       HL::MmapWrapper::unmap (ptr, size);
     }
   }
@@ -105,7 +105,7 @@ private:
 	} else {
 	  // Out of sequence.
 	  // We had an old sequence - dump it and start a new one.
-	  HL::MmapWrapper::release (start, sz);
+	  //	  HL::MmapWrapper::release (start, sz);
 	  HL::MmapWrapper::unmap (start, sz);
 	  start = p;
 	  last = (void *) ((uintptr_t) p + HL::MmapWrapper::Size);
@@ -114,7 +114,7 @@ private:
 	i++;
       }
       // Free remainder.
-      HL::MmapWrapper::release (start, sz);
+      // HL::MmapWrapper::release (start, sz);
       HL::MmapWrapper::unmap (start, sz);
       _freedCount = 0;
     }
