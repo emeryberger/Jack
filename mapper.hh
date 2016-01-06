@@ -9,6 +9,8 @@
 #endif
 #endif
 
+#include "mmapwrapper.hh"
+
 template <class Sizer>
 class Mapper {
 private:
@@ -24,13 +26,13 @@ public:
 #if defined(_WIN32)
     // For now, we assume that the heap is NOT executable.  If we
     // want it to be, change to PAGE_EXECUTE_READWRITE.
-    auto ptr = VirtualAlloc((LPVOID) baseAddress, RangeSize * Sizer::SizeClasses, MEM_RESERVE | MEM_RESET | MEM_LARGE_PAGES, PAGE_READWRITE);
+    auto ptr = VirtualAlloc((LPVOID) baseAddress, HeapSize, MEM_RESERVE | MEM_RESET | MEM_LARGE_PAGES, PAGE_READWRITE);
     if (!ptr) {
       abort();
     }
 #else
     void * r = mmap((void *) baseAddress,
-		    RangeSize * Sizer::SizeClasses,
+		    HeapSize,
 		    PROT_READ | PROT_WRITE,
 		    MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED | MAP_NORESERVE,
 		    AnonFileDescriptor, 0);
@@ -108,7 +110,7 @@ public:
 
   auto isValid(void * ptr) {
     if (((uintptr_t) ptr < baseAddress) ||
-	((uintptr_t) ptr > baseAddress + RangeSize * Sizer::SizeClasses)) {
+	((uintptr_t) ptr > baseAddress + HeapSize)) {
       // Out of bounds.
       return false;
     }
@@ -125,7 +127,7 @@ public:
 
   inline static auto inRange(void * ptr) {
     if (((uintptr_t) ptr < baseAddress) ||
-	((uintptr_t) ptr > baseAddress + RangeSize * Sizer::SizeClasses)) {
+	((uintptr_t) ptr > baseAddress + HeapSize)) {
       return false;
     }
     return true;
@@ -154,6 +156,7 @@ public:
 private:
 
   static const uint64_t baseAddress = 0x10000000000; // start of allocated objects
+  static const uint64_t HeapSize = RangeSize * Sizer::SizeClasses;
   static const auto log2RangeSize = staticlog(RangeSize);
 
   /// Per size-class stuff.
