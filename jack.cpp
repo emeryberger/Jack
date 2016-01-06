@@ -43,7 +43,7 @@ typedef HalfLogSizeClassManager Sizer;
 /// ANSI semantics, locked with one big Mac lock, around a Jack mallocator.
 
 
-typedef HL::ANSIWrapper<HL::LockedHeap<HL::MacLock, Jallocator<4096, Sizer, USE_RANDOMIZATION>>> theHeap;
+typedef HL::ANSIWrapper<HL::LockedHeap<HL::MacLock, YOLOAllocator<4096, Sizer, USE_RANDOMIZATION>>> theHeap;
 
 //typedef HL::ANSIWrapper<HL::LockedHeap<HL::MacLock, Mallocator<4096, Sizer, USE_RANDOMIZATION>>> theHeap;
 
