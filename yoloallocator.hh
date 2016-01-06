@@ -18,7 +18,8 @@
 template <size_t RefillAmount,
 	  class Sizer,
 	  bool UseRandomization>
-class YOLOAllocator {
+class YOLOAllocator : public Mapper<Sizer>
+{
 public:
   enum { Alignment = Mapper<Sizer>::Alignment };
 
@@ -35,7 +36,7 @@ public:
 
   void * malloc(size_t sz) {
     //// JUST GET FRESH MEMORY AND NEVER REUSE IT.
-    void * p = _theMapper.malloc(sz);
+    void * p = Mapper<Sizer>::malloc(sz);
     // If this is a "small" object (smaller than a page),
     // and it's on a new page, set the remainder for that page to HL::MmapWrapper::Size bytes.
     if (sz <= HL::MmapWrapper::Size) {
@@ -65,7 +66,7 @@ public:
       // pointer errors.
       memset((void *) start, 0, size);
       auto offset = (uintptr_t) ptr - base;
-      _remainingInPage[ind][offset / HL::MmapWrapper::Size] -= _theMapper.getSize(ptr);
+      _remainingInPage[ind][offset / HL::MmapWrapper::Size] -= Mapper<Sizer>::getSize(ptr);
       if (_remainingInPage[ind][offset / HL::MmapWrapper::Size] == 0) {
 	auto startPage = (void *) ((uintptr_t) ptr & ~(HL::MmapWrapper::Size-1));
 	addToFreed(startPage);
@@ -76,7 +77,7 @@ public:
   }
 
   auto getSize(void * ptr) {
-    return _theMapper.getSize(ptr);
+    return Mapper<Sizer>::getSize(ptr);
   }
 
 private:
@@ -126,7 +127,6 @@ private:
   std::array<void *, FREED_BUFFER_LENGTH> _freed;
   int * _remainingInPage[Sizer::SizeClasses];
   void * _lastPage[Sizer::SizeClasses];
-  Mapper<Sizer>   _theMapper;
 };
 
 #endif
