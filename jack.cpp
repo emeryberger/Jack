@@ -25,7 +25,7 @@
 using namespace std;
 
 #include "ansiwrapper.hh"
-#include "jallocator.hh"
+#include "yoloallocator.hh"
 #include "lockedheap.hh"
 #include "maclock.hh"
 #include "mallocator.hh"
